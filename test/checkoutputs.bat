@@ -8,4 +8,5 @@ make_world.exe 100 0.1 | step_world_v3_opencl 0.1 10000 | render_world dump_step
 fc dump_step_world.bmp dump_step_world_v1_lambda.bmp
 fc dump_step_world.bmp dump_step_world_v2_function.bmp
 fc dump_step_world.bmp dump_step_world_v3_opencl.bmp
+
 pause

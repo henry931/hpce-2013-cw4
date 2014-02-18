@@ -145,12 +145,43 @@ namespace hpce{
 			sources.push_back(std::make_pair(kernelSource.c_str(), kernelSource.size()+1)); // push on our single string
 
 			cl::Program program(context, sources);
-			program.build(devices);
+			try{
+				program.build(devices);
+			}catch(...){
+				for(unsigned i=0;i<devices.size();i++){
+					std::cerr<<"Log for device "<<devices[i].getInfo<CL_DEVICE_NAME>()<<":\n\n";
+					std::cerr<<program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[i])<<"\n\n";
+				}
+				throw;
+			}
+
+			// Allocate buffers
+			size_t cbBuffer=4*world.w*world.h;
+			cl::Buffer buffProperties(context, CL_MEM_READ_ONLY, cbBuffer);
+			cl::Buffer buffState(context, CL_MEM_READ_ONLY, cbBuffer);
+			cl::Buffer buffBuffer(context, CL_MEM_WRITE_ONLY, cbBuffer);
+
+			// Set the kernel parameters
+			cl::Kernel kernel(program, "kernel_xy");
 
 			unsigned w=world.w, h=world.h;
 
 			float outer=world.alpha*dt;		// We spread alpha to other cells per time
 			float inner=1-outer/4;				// Anything that doesn't spread stays
+
+			// Bind parameters to the kernel
+			kernel.setArg(0, buffState);
+			kernel.setArg(1, buffBuffer);
+			kernel.setArg(2, inner);
+			kernel.setArg(3, outer);
+			kernel.setArg(4, buffProperties);
+
+			// Create command queue
+			cl::CommandQueue queue(context, device);
+
+			// Copy over properties buffer to GPU
+			queue.enqueueWriteBuffer(buffProperties, CL_TRUE, 0, cbBuffer, &world.properties[0]);
+
 
 			// This is our temporary working space
 			std::vector<float> buffer(w*h);
