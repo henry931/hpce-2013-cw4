@@ -1,0 +1,25 @@
+Changes I had to make to get things to work in Visual Studio 2012
+
+Using AMD APP SDK header files and library
+
+test_opencl.cpp:
+Comment out #include <alloca.h>
+Also need to use given (from CW download) header file as AMD header does not have enqueueBarrier as a member of CommandQueue
+
+heat.cpp:
+#include <string>
+
+heat.cpp:
+#include <string>
+
+make_world.cpp:
+strtof() not provided in header file. Use (float) strtod() instead
+
+step_world.cpp:
+strtof() not provided in header file. Use (float) strtod() instead
+
+src/your_login/step_world_v3_opencl.cpp:
+I needed to put #define NOMINMAX at the top to stop a minwindef.h macro than gave errors when usind std::min and std::max
+(This issue was sparked by including the cl.hpp file for some reason)
+
+

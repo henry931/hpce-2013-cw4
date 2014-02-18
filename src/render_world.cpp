@@ -1,4 +1,5 @@
 #include "heat.hpp"
+#include <string>
 
 #include <cstdlib>
 

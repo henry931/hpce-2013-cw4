@@ -10,9 +10,11 @@
 #include <streambuf>
 
 
-# include <alloca.h>
+//#include _alloca
+//#include <alloca.h>
 #define __CL_ENABLE_EXCEPTIONS 
 #include "CL/cl.hpp"
+
 
 int main(int argc, char *argv[])
 {
