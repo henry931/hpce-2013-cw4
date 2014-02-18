@@ -189,16 +189,23 @@ namespace hpce{
 
 			for(unsigned t=0;t<n;t++){
 
-				for(unsigned y=0;y<h;y++){
+				// Copy current state over to GPU
+				cl::Event evCopiedState;
+				queue.enqueueWriteBuffer(buffState, CL_FALSE, 0, cbBuffer, &world.state[0], NULL, &evCopiedState);
 
-					for(unsigned x=0;x<w;x++){
+				// Set up iteration space
+				cl::NDRange offset(0, 0);               // Always start iterations at x=0, y=0
+				cl::NDRange globalSize(w, h);			// Global size must match the original loops
+				cl::NDRange localSize=cl::NullRange;    // We don't care about local size
 
-						kernel_xy(x,y,w, &world.state[0], &buffer[0],inner,outer, (const uint32_t *) &world.properties[0]);
+				// Establish dependencies and produce event evExecutedKernel
+				std::vector<cl::Event> kernelDependencies(1, evCopiedState);
+				cl::Event evExecutedKernel;
+				queue.enqueueNDRangeKernel(kernel, offset, globalSize, localSize, &kernelDependencies, &evExecutedKernel);
 
-					}  // end of for(x...
-
-				} // end of for(y...
-
+				// Copy results back after job has finished
+				std::vector<cl::Event> copyBackDependencies(1, evExecutedKernel);
+				queue.enqueueReadBuffer(buffBuffer, CL_TRUE, 0, cbBuffer, &buffer[0], &copyBackDependencies);
 
 				// All cells have now been calculated and placed in buffer, so we replace
 				// the old state with the new state
