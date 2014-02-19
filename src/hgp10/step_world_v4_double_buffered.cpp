@@ -1,4 +1,7 @@
-#define NOMINMAX //Otherwise minwindef.h runs macros
+//Otherwise minwindef.h runs macros
+#define NOMINMAX 
+//
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 #include "heat.hpp"
 #include <stdexcept>
 #include <cmath>
@@ -90,7 +93,7 @@ namespace hpce{
 				);
 		}
 
-		void StepWorldV3OpenCL(world_t &world, float dt, unsigned n)
+		void StepWorldV4DoubleBuffered(world_t &world, float dt, unsigned n)
 		{
 			// Get list of platforms
 			std::vector<cl::Platform> platforms;
@@ -158,8 +161,8 @@ namespace hpce{
 			// Allocate buffers
 			size_t cbBuffer=4*world.w*world.h;
 			cl::Buffer buffProperties(context, CL_MEM_READ_ONLY, cbBuffer);
-			cl::Buffer buffState(context, CL_MEM_READ_ONLY, cbBuffer);
-			cl::Buffer buffBuffer(context, CL_MEM_WRITE_ONLY, cbBuffer);
+			cl::Buffer buffState(context, CL_MEM_READ_WRITE, cbBuffer);
+			cl::Buffer buffBuffer(context, CL_MEM_READ_WRITE, cbBuffer);
 
 			// Set the kernel parameters
 			cl::Kernel kernel(program, "kernel_xy");
@@ -190,8 +193,8 @@ namespace hpce{
 			for(unsigned t=0;t<n;t++){
 
 				// Copy current state over to GPU
-				cl::Event evCopiedState;
-				queue.enqueueWriteBuffer(buffState, CL_FALSE, 0, cbBuffer, &world.state[0], NULL, &evCopiedState);
+				//cl::Event evCopiedState;
+				queue.enqueueWriteBuffer(buffState, CL_TRUE, 0, cbBuffer, &world.state[0], NULL/*, &evCopiedState*/);
 
 				// Set up iteration space
 				cl::NDRange offset(0, 0);               // Always start iterations at x=0, y=0
@@ -199,13 +202,13 @@ namespace hpce{
 				cl::NDRange localSize=cl::NullRange;    // We don't care about local size
 
 				// Establish dependencies and produce event evExecutedKernel
-				std::vector<cl::Event> kernelDependencies(1, evCopiedState);
-				cl::Event evExecutedKernel;
-				queue.enqueueNDRangeKernel(kernel, offset, globalSize, localSize, &kernelDependencies, &evExecutedKernel);
+				//std::vector<cl::Event> kernelDependencies(1, evCopiedState);
+				//cl::Event evExecutedKernel;
+				queue.enqueueNDRangeKernel(kernel, offset, globalSize, localSize/*, &kernelDependencies, &evExecutedKernel*/);
 
-				// Copy results back after job has finished
-				std::vector<cl::Event> copyBackDependencies(1, evExecutedKernel);
-				queue.enqueueReadBuffer(buffBuffer, CL_TRUE, 0, cbBuffer, &buffer[0], &copyBackDependencies);
+				queue.enqueueBarrier(); // <- new barrier here
+
+
 
 				// All cells have now been calculated and placed in buffer, so we replace
 				// the old state with the new state
@@ -215,7 +218,14 @@ namespace hpce{
 
 				world.t += dt; // We have moved the world forwards in time
 
+				// Copy results back after job has finished
+				//std::vector<cl::Event> copyBackDependencies(1, evExecutedKernel);
+				queue.enqueueReadBuffer(buffBuffer, CL_TRUE, 0, cbBuffer, &world.state[0]/*, &copyBackDependencies*/);
+
+
+
 			} // end of for(t...
+
 		}
 
 	}; // namespace hgp10
@@ -245,7 +255,7 @@ int main(int argc, char *argv[])
 		std::cerr<<"Loaded world with w="<<world.w<<", h="<<world.h<<std::endl;
 
 		std::cerr<<"Stepping by dt="<<dt<<" for n="<<n<<std::endl;
-		hpce::hgp10::StepWorldV3OpenCL(world, dt, n);
+		hpce::hgp10::StepWorldV4DoubleBuffered(world, dt, n);
 
 		hpce::SaveWorld(std::cout, world, binary);
 	}catch(const std::exception &e){

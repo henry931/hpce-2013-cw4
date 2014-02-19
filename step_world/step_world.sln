@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step_world_v2_function", ".
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step_world_v3_opencl", "..\step_world_v3_opencl\step_world_v3_opencl\step_world_v3_opencl.vcxproj", "{DB4F9F79-D41A-40D5-AC96-01F7210B8360}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step_world_v4_double_buffered", "..\step_world_v4_double_buffered\step_world_v4_double_buffered\step_world_v4_double_buffered.vcxproj", "{07096249-5204-4604-AACE-0150E172C851}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -83,6 +85,16 @@ Global
 		{DB4F9F79-D41A-40D5-AC96-01F7210B8360}.Release|Win32.ActiveCfg = Release|x64
 		{DB4F9F79-D41A-40D5-AC96-01F7210B8360}.Release|x64.ActiveCfg = Release|x64
 		{DB4F9F79-D41A-40D5-AC96-01F7210B8360}.Release|x64.Build.0 = Release|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Debug|Win32.ActiveCfg = Debug|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Debug|x64.ActiveCfg = Debug|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Debug|x64.Build.0 = Debug|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Release|Mixed Platforms.Build.0 = Release|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Release|Win32.ActiveCfg = Release|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Release|x64.ActiveCfg = Release|x64
+		{07096249-5204-4604-AACE-0150E172C851}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

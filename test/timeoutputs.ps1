@@ -6,14 +6,19 @@ $env:HPCE_CL_SRC_DIR="../src/hgp10"
 
 # make_world dimensions propagation_constant
 # step_world time_step number_of_steps
+Write-Host "Timing step_world"
 Measure-Command {cat .\world.txt | .\step_world 0.1 1000 > $null}
+Write-Host "Timing step_world_v1_lambda"
 Measure-Command {cat .\world.txt | .\step_world_v1_lambda 0.1 1000 > $null}
+Write-Host "Timing step_world_v2_function"
 Measure-Command {cat .\world.txt | .\step_world_v2_function 0.1 1000 > $null}
 
 $env:HPCE_SELECT_DEVICE="0"
-Measure-Command {cat .\world.txt | .\step_world_v3_opencl 0.1 0 > $null}
+Write-Host "Timing step_world_v3_opencl with GPU"
+Measure-Command {cat .\world.txt | .\step_world_v3_opencl 0.1 1000 > $null}
 
 $env:HPCE_SELECT_DEVICE="1"
+Write-Host "Timing step_world_v3_opencl with CPU"
 Measure-Command {cat .\world.txt | .\step_world_v3_opencl 0.1 1000 > $null}
 
 pause
