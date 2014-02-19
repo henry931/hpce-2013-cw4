@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step_world_v3_opencl", "..\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step_world_v4_double_buffered", "..\step_world_v4_double_buffered\step_world_v4_double_buffered\step_world_v4_double_buffered.vcxproj", "{07096249-5204-4604-AACE-0150E172C851}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step_world_v5_packed_properties", "..\step_world_v5_packed_properties\step_world_v5_packed_properties\step_world_v5_packed_properties.vcxproj", "{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -95,6 +97,16 @@ Global
 		{07096249-5204-4604-AACE-0150E172C851}.Release|Win32.ActiveCfg = Release|x64
 		{07096249-5204-4604-AACE-0150E172C851}.Release|x64.ActiveCfg = Release|x64
 		{07096249-5204-4604-AACE-0150E172C851}.Release|x64.Build.0 = Release|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Debug|Win32.ActiveCfg = Debug|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Debug|x64.ActiveCfg = Debug|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Debug|x64.Build.0 = Debug|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Release|Mixed Platforms.Build.0 = Release|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Release|Win32.ActiveCfg = Release|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Release|x64.ActiveCfg = Release|x64
+		{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

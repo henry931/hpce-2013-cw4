@@ -93,7 +93,7 @@ namespace hpce{
 				);
 		}
 
-		void StepWorldV4DoubleBuffered(world_t &world, float dt, unsigned n)
+		void StepWorldV5PackedProperties(world_t &world, float dt, unsigned n)
 		{
 			// Get list of platforms
 			std::vector<cl::Platform> platforms;
@@ -142,7 +142,7 @@ namespace hpce{
 			cl::Context context(devices);
 
 			// Get source cl file
-			std::string kernelSource=LoadSource("step_world_v3_kernel.cl");
+			std::string kernelSource=LoadSource("step_world_v5_packed_properties.cl");
 
 			cl::Program::Sources sources;   // A vector of (data,length) pairs
 			sources.push_back(std::make_pair(kernelSource.c_str(), kernelSource.size()+1)); // push on our single string
@@ -268,8 +268,8 @@ int main(int argc, char *argv[])
 		std::cerr<<"Loaded world with w="<<world.w<<", h="<<world.h<<std::endl;
 
 		std::cerr<<"Stepping by dt="<<dt<<" for n="<<n<<std::endl;
-		hpce::hgp10::StepWorldV4DoubleBuffered(world, dt, n);
-
+		hpce::hgp10::StepWorldV5PackedProperties(world, dt, n);
+		
 		hpce::SaveWorld(std::cout, world, binary);
 	}catch(const std::exception &e){
 		std::cerr<<"Exception : "<<e.what()<<std::endl;

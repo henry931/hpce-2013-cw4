@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{07096249-5204-4604-AACE-0150E172C851}</ProjectGuid>
+    <ProjectGuid>{72F7AFBA-4BB8-46FD-B4CF-95257A633FA9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>step_world_v4_double_buffered</RootNamespace>
+    <RootNamespace>step_world_v5_packed_properties</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -81,7 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\heat.cpp" />
-    <ClCompile Include="..\..\src\hgp10\step_world_v4_double_buffered.cpp" />
+    <ClCompile Include="..\..\src\hgp10\step_world_v5_packed_properties.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

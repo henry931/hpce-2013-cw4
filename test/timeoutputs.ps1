@@ -21,4 +21,12 @@ $env:HPCE_SELECT_DEVICE="1"
 Write-Host "Timing step_world_v3_opencl with CPU"
 Measure-Command {cat .\world.txt | .\step_world_v3_opencl 0.1 1000 > $null}
 
+$env:HPCE_SELECT_DEVICE="0"
+Write-Host "Timing step_world_v4_double_buffered with GPU"
+Measure-Command {cat .\world.txt | .\step_world_v4_double_buffered 0.1 1000 > $null}
+
+$env:HPCE_SELECT_DEVICE="1"
+Write-Host "Timing step_world_v4_double_buffered with CPU"
+Measure-Command {cat .\world.txt | .\step_world_v4_double_buffered 0.1 1000 > $null}
+
 pause
