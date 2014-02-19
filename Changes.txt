@@ -5,7 +5,7 @@ Using AMD APP SDK V2.9 header files and library
 test_opencl.cpp:
 Comment out #include <alloca.h>
 
-enqueueBarrier is a deprecated API in 1.2
+enqueueBarrier is a deprecated API in specification 1.2
 solution: add #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 However could use given (from CW download) header file instead
 
@@ -29,4 +29,6 @@ src/your_login/step_world_v4_double_buffered:
 #define NOMINMAX
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 
-
+step_world_v5_packed_properties:
+#define NOMINMAX
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS

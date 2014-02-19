@@ -11,7 +11,10 @@ __kernel void kernel_xy(__global const float *world_state, __global float *buffe
 
 	unsigned index=y*w + x;
 
-	if((world_properties[index] & Cell_Fixed) || (world_properties[index] & Cell_Insulator)){
+	// Read cell properties into private uint variable
+	uint myProps = world_properties[index];
+
+	if((myProps & Cell_Fixed) || (myProps & Cell_Insulator)){
 		// Do nothing, this cell never changes (e.g. a boundary, or an interior fixed-value heat-source)
 		buffer[index]=world_state[index];
 	}else{
@@ -19,27 +22,27 @@ __kernel void kernel_xy(__global const float *world_state, __global float *buffe
 		float acc=inner*world_state[index];
 
 		// Cell above
-		if(! (world_properties[index-w] & Cell_Insulator)) {
-			contrib += outer;
-			acc += outer * world_state[index-w];
+		if(myProps & 0x4) {
+		contrib += outer;
+		acc += outer * world_state[index-w];
 		}
 
 		// Cell below
-		if(! (world_properties[index+w] & Cell_Insulator)) {
-			contrib += outer;
-			acc += outer * world_state[index+w];
+		if(myProps & 0x8) {
+		contrib += outer;
+		acc += outer * world_state[index+w];
 		}
 
 		// Cell left
-		if(! (world_properties[index-1] & Cell_Insulator)) {
-			contrib += outer;
-			acc += outer * world_state[index-1];
+		if(myProps & 0x10) {
+		contrib += outer;
+		acc += outer * world_state[index-1];
 		}
 
 		// Cell right
-		if(! (world_properties[index+1] & Cell_Insulator)) {
-			contrib += outer;
-			acc += outer * world_state[index+1];
+		if(myProps & 0x20) {
+		contrib += outer;
+		acc += outer * world_state[index+1];
 		}
 
 		// Scale the accumulate value by the number of places contributing to it
@@ -48,5 +51,5 @@ __kernel void kernel_xy(__global const float *world_state, __global float *buffe
 		res=min(1.0f, max(0.0f, res));
 		buffer[index] = res;
 
-	} // end of if(insulator){ ... } else {
+	} 
 }

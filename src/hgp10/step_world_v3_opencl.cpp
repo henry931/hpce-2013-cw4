@@ -22,53 +22,6 @@ namespace hpce{
 		\note Overall time increment will be n*dt
 		*/
 
-		// Note the change from unsigned -> uint32_t to get a known size type
-		void kernel_xy(uint32_t x, uint32_t y, uint32_t w, const float *world_state, float *buffer, const float inner, const float outer, const uint32_t *world_properties)
-		{
-
-			unsigned index=y*w + x;
-
-			if((world_properties[index] & Cell_Fixed) || (world_properties[index] & Cell_Insulator)){
-				// Do nothing, this cell never changes (e.g. a boundary, or an interior fixed-value heat-source)
-				buffer[index]=world_state[index];
-			}else{
-				float contrib=inner;
-				float acc=inner*world_state[index];
-
-				// Cell above
-				if(! (world_properties[index-w] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index-w];
-				}
-
-				// Cell below
-				if(! (world_properties[index+w] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index+w];
-				}
-
-				// Cell left
-				if(! (world_properties[index-1] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index-1];
-				}
-
-				// Cell right
-				if(! (world_properties[index+1] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index+1];
-				}
-
-				// Scale the accumulate value by the number of places contributing to it
-				float res=acc/contrib;
-				// Then clamp to the range [0,1]
-				res=std::min(1.0f, std::max(0.0f, res));
-				buffer[index] = res;
-
-			} // end of if(insulator){ ... } else {
-
-		}
-
 		// Get CL Code
 		std::string LoadSource(const char *fileName)
 		{

@@ -25,53 +25,6 @@ namespace hpce{
 		\note Overall time increment will be n*dt
 		*/
 
-		// Note the change from unsigned -> uint32_t to get a known size type
-		void kernel_xy(uint32_t x, uint32_t y, uint32_t w, const float *world_state, float *buffer, const float inner, const float outer, const uint32_t *world_properties)
-		{
-
-			unsigned index=y*w + x;
-
-			if((world_properties[index] & Cell_Fixed) || (world_properties[index] & Cell_Insulator)){
-				// Do nothing, this cell never changes (e.g. a boundary, or an interior fixed-value heat-source)
-				buffer[index]=world_state[index];
-			}else{
-				float contrib=inner;
-				float acc=inner*world_state[index];
-
-				// Cell above
-				if(! (world_properties[index-w] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index-w];
-				}
-
-				// Cell below
-				if(! (world_properties[index+w] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index+w];
-				}
-
-				// Cell left
-				if(! (world_properties[index-1] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index-1];
-				}
-
-				// Cell right
-				if(! (world_properties[index+1] & Cell_Insulator)) {
-					contrib += outer;
-					acc += outer * world_state[index+1];
-				}
-
-				// Scale the accumulate value by the number of places contributing to it
-				float res=acc/contrib;
-				// Then clamp to the range [0,1]
-				res=std::min(1.0f, std::max(0.0f, res));
-				buffer[index] = res;
-
-			} // end of if(insulator){ ... } else {
-
-		}
-
 		// Get CL Code
 		std::string LoadSource(const char *fileName)
 		{
@@ -142,7 +95,7 @@ namespace hpce{
 			cl::Context context(devices);
 
 			// Get source cl file
-			std::string kernelSource=LoadSource("step_world_v5_packed_properties.cl");
+			std::string kernelSource=LoadSource("step_world_v5_kernel.cl");
 
 			cl::Program::Sources sources;   // A vector of (data,length) pairs
 			sources.push_back(std::make_pair(kernelSource.c_str(), kernelSource.size()+1)); // push on our single string
@@ -182,9 +135,44 @@ namespace hpce{
 			// Create command queue
 			cl::CommandQueue queue(context, device);
 
-			// Copy over properties buffer to GPU
-			queue.enqueueWriteBuffer(buffProperties, CL_TRUE, 0, cbBuffer, &world.properties[0]);
+			std::vector<uint32_t> packed(w*h, 0);
 
+			for(unsigned y = 0; y < h; y++){
+				for(unsigned x = 0; x < w; x++){
+
+					unsigned index=y*w + x;
+
+					packed[index] = world.properties[index];
+
+					// Top case
+					if( !((world.properties[index] & Cell_Fixed) || (world.properties[index] & Cell_Insulator)) ){
+
+						if( !(world.properties[index-w] & Cell_Insulator) ){
+							packed[index] += 0x4;
+						}
+
+						if( !(world.properties[index+w] & Cell_Insulator) ){
+							packed[index] += 0x8;
+						}
+
+						if( !(world.properties[index-1] & Cell_Insulator) ){
+							packed[index] += 0x10;
+						}
+
+						if( !(world.properties[index+1] & Cell_Insulator) ){
+							packed[index] += 0x20;
+						}
+
+					}
+
+				}
+			}
+
+
+
+
+			// Copy over properties buffer to GPU
+			queue.enqueueWriteBuffer(buffProperties, CL_TRUE, 0, cbBuffer, &packed[0]);
 
 			// This is our temporary working space
 			std::vector<float> buffer(w*h);
@@ -269,7 +257,7 @@ int main(int argc, char *argv[])
 
 		std::cerr<<"Stepping by dt="<<dt<<" for n="<<n<<std::endl;
 		hpce::hgp10::StepWorldV5PackedProperties(world, dt, n);
-		
+
 		hpce::SaveWorld(std::cout, world, binary);
 	}catch(const std::exception &e){
 		std::cerr<<"Exception : "<<e.what()<<std::endl;
@@ -277,4 +265,5 @@ int main(int argc, char *argv[])
 	}
 
 	return 0;
+
 }
