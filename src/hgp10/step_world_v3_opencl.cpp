@@ -1,4 +1,5 @@
-#define NOMINMAX //Otherwise minwindef.h runs macros
+// Otherwise minwindef.h runs naughty macros
+#define NOMINMAX
 #include "heat.hpp"
 #include <stdexcept>
 #include <cmath>
@@ -174,7 +175,6 @@ namespace hpce{
 	}; // namespace hgp10
 
 }; // namepspace hpce
-
 
 int main(int argc, char *argv[])
 {

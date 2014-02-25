@@ -1,6 +1,6 @@
-//Otherwise minwindef.h runs macros
+// Otherwise minwindef.h runs naughty macros
 #define NOMINMAX 
-//
+// Needed for enqueueBarrier
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 #include "heat.hpp"
 #include <stdexcept>
@@ -138,7 +138,6 @@ namespace hpce{
 			// Copy over properties buffer to GPU
 			queue.enqueueWriteBuffer(buffProperties, CL_TRUE, 0, cbBuffer, &world.properties[0]);
 
-
 			// This is our temporary working space
 			std::vector<float> buffer(w*h);
 
@@ -146,13 +145,8 @@ namespace hpce{
 			//cl::Event evCopiedState;
 			queue.enqueueWriteBuffer(buffState, CL_TRUE, 0, cbBuffer, &world.state[0], NULL/*, &evCopiedState*/);
 
-
-
-
 			////////////////////////////////////// Main Loop /////////////////////////////////////////////
 			for(unsigned t=0;t<n;t++){
-
-
 
 				// Set up iteration space
 				cl::NDRange offset(0, 0);               // Always start iterations at x=0, y=0
@@ -166,31 +160,23 @@ namespace hpce{
 
 				queue.enqueueBarrier(); // <- new barrier here
 
-
-
 				// All cells have now been calculated and placed in buffer, so we replace
 				// the old state with the new state
-				//std::swap(world.state, buffer);
-				std::swap(buffState, buffBuffer);   // Used to be std::swap(world.state, buffer)
+				// Used to be std::swap(world.state, buffer)
+				std::swap(buffState, buffBuffer);   
 				// Swapping rather than assigning is cheaper: just a pointer swap
 				// rather than a memcpy, so O(1) rather than O(w*h)
 
 				kernel.setArg(0, buffState);
 				kernel.setArg(1, buffBuffer);
 
-
 				world.t += dt; // We have moved the world forwards in time
-
-
-
-
 
 			} // end of for(t...
 
 			// Copy results back after job has finished
 			//std::vector<cl::Event> copyBackDependencies(1, evExecutedKernel);
 			queue.enqueueReadBuffer(buffBuffer, CL_TRUE, 0, cbBuffer, &world.state[0]/*, &copyBackDependencies*/);
-
 
 		}
 

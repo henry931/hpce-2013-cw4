@@ -9,10 +9,9 @@
 #include <fstream>
 #include <streambuf>
 
-
-//#include _alloca
 //#include <alloca.h>
 #define __CL_ENABLE_EXCEPTIONS 
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 #include "CL/cl.hpp"
 
 

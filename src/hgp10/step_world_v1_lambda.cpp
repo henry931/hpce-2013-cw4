@@ -1,5 +1,4 @@
 #include "heat.hpp"
-
 #include <stdexcept>
 #include <cmath>
 #include <cstdint>
@@ -72,7 +71,6 @@ namespace hpce{
 
 			};
 
-
 			for(unsigned t=0;t<n;t++){
 
 				for(unsigned y=0;y<h;y++){
@@ -84,7 +82,6 @@ namespace hpce{
 					}  // end of for(x...
 
 				} // end of for(y...
-
 
 				// All cells have now been calculated and placed in buffer, so we replace
 				// the old state with the new state
@@ -100,7 +97,6 @@ namespace hpce{
 	}; // namespace hgp10
 
 }; // namepspace hpce
-
 
 int main(int argc, char *argv[])
 {
